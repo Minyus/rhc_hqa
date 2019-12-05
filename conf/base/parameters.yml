@@ -22,6 +22,13 @@ PIPELINES:
     decorator: pipelinex.log_time
     nodes:
 
-      - inputs:
+      - inputs: cv_index_list
         func:
-        outputs:
+          =: rhc_hqa.rhc_hqa.cv_index_list_to_df
+        outputs: index_df
+
+      - inputs: [features, index_df]
+        func:
+          =: pipelinex.DfMerge
+          "on": id
+        outputs: df_020

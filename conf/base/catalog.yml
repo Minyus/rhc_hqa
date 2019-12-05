@@ -8,3 +8,10 @@
 #  type: JSONLocalDataSet
 #  type: kedro.contrib.io.yaml_local.YAMLLocalDataSet
   cached: False
+
+data/input/features.csv:
+
+data/input/cv_index_list.json:
+  type: JSONLocalDataSet
+
+data/load/df_020.csv:
