@@ -1,7 +1,81 @@
+col_outcome: death_1
+col_treatment: swang1_1
+cols_feature:
+  - age_1
+  - age_2
+  - alb1_1
+  - amihx_1
+  - aps1_1
+  - aps1_2
+  - bili1_1
+  - ca_1
+  - ca_2
+  - card_1
+  - cardiohx_1
+  - cat1_1
+  - cat1_2
+  - cat1_3
+  - chfhx_1
+  - chrpulhx_1
+  - crea1_1
+  - death_1
+  - dementhx_1
+  - dnr1_1
+  - edu_1
+  - gastr_1
+  - gibledhx_1
+  - hema1_1
+  - hema_1
+  - hrt1_1
+  - hrt1_2
+  - immunhx_1
+  - income_1
+  - income_2
+  - income_3
+  - liverhx_1
+  - malighx_1
+  - meanbp1_1
+  - meanbp1_2
+  - meta_1
+  - neuro_1
+  - ninsclas_1
+  - ortho_1
+  - paco21_1
+  - paco21_2
+  - pafi1_1
+  - ph1_1
+  - ph1_2
+  - pot1_1
+  - pot1_2
+  - psychhx_1
+  - ptid
+  - race_1
+  - race_2
+  - renal_1
+  - renalhx_1
+  - resp1_1
+  - resp_1
+  - scoma1_1
+  - scoma1_2
+  - seps_1
+  - sex_1
+  - sod1_1
+  - sod1_2
+  - temp1_1
+  - temp1_2
+  - transhx_1
+  - trauma_1
+  - wblc1_1
+  - wblc1_2
+  - wtkilo1_1
+  - wtkilo1_2
+
+propensity_lower: 0.01
+propensity_upper: 0.99
 
 RUN_CONFIG:
   pipeline_name: __default__
-  only_missing: True
+  only_missing: False
   runner: SequentialRunner # None
   tags: # None
   node_names: # None
@@ -32,3 +106,7 @@ PIPELINES:
           =: pipelinex.DfMerge
           "on": id
         outputs: df_020
+
+      - inputs: [df_020, parameters]
+        func: rhc_hqa.rhc_hqa.estimate_cate
+        outputs: df_030
