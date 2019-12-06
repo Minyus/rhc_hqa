@@ -48,7 +48,7 @@ cols_feature:
   - pot1_1
   - pot1_2
   - psychhx_1
-  - ptid
+#  - ptid
   - race_1
   - race_2
   - renal_1
@@ -109,4 +109,4 @@ PIPELINES:
 
       - inputs: [df_020, parameters]
         func: rhc_hqa.rhc_hqa.estimate_cate
-        outputs: df_030
+        outputs: [df_030, feature_importances_df]

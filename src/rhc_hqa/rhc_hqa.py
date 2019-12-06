@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 from lightgbm import LGBMRegressor
 
@@ -26,7 +27,7 @@ def estimate_cate(df, parameters):
 
     for s in split_list:
         ps_model = LogisticRegression(solver="liblinear")
-        tot_model = LGBMRegressor(min_child_samples=400)
+        tot_model = LGBMRegressor(min_child_samples=400, importance_type="gain")
         col_propensity = "propensity_score_{}".format(s)
         col_trans_outcome = "transformed_outcome_{}".format(s)
         col_cate = "cate_{}".format(s)
@@ -49,6 +50,27 @@ def estimate_cate(df, parameters):
         train_df = df.query("split != @s")
 
         tot_model.fit(train_df[cols_feature], train_df[col_trans_outcome])
-        cate_sr = tot_model.predict(df[cols_feature])
-        df[col_cate] = cate_sr
-    return df
+        df[col_cate] = tot_model.predict(df[cols_feature])
+
+        col_cate_if_seps_1 = "cate_if_seps_1_{}".format(s)
+        col_cate_if_seps_0 = "cate_if_seps_0_{}".format(s)
+        col_cate_diff_seps = "cate_diff_seps_{}".format(s)
+
+        seps_1_df = df[cols_feature].copy()
+        seps_1_df["seps_1"] = 1.0
+        df[col_cate_if_seps_1] = tot_model.predict(seps_1_df)
+
+        seps_0_df = df[cols_feature].copy()
+        seps_0_df["seps_1"] = 0.0
+        df[col_cate_if_seps_0] = tot_model.predict(seps_0_df)
+
+        df[col_cate_diff_seps] = df[col_cate_if_seps_1] - df[col_cate_if_seps_0]
+
+        imp_df = pd.DataFrame(
+            {
+                "feature": cols_feature,
+                "propensity_model_coef": np.squeeze(ps_model.coef_),
+                "cate_model_importances": tot_model.feature_importances_,
+            }
+        )
+    return df, imp_df
