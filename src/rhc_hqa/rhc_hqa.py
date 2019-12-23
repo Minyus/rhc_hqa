@@ -25,9 +25,16 @@ def estimate_cate(df, parameters):
     split_list = df["split"].drop_duplicates().to_list()
     split_list = sorted(split_list)
 
+    ps_model_dict = {}
+    tot_model_dict = {}
+
+    np.random.seed(42)
+
     for s in split_list:
-        ps_model = LogisticRegression(solver="liblinear")
-        tot_model = LGBMRegressor(min_child_samples=400, importance_type="gain")
+        ps_model = LogisticRegression(solver="liblinear", random_state=42)
+        tot_model = LGBMRegressor(
+            min_child_samples=400, importance_type="gain", random_state=42
+        )
         col_propensity = "propensity_score_{}".format(s)
         col_trans_outcome = "transformed_outcome_{}".format(s)
         col_cate = "cate_{}".format(s)
@@ -73,4 +80,8 @@ def estimate_cate(df, parameters):
                 "cate_model_importances": tot_model.feature_importances_,
             }
         )
-    return df, imp_df
+        ps_model_dict[s] = ps_model
+        tot_model_dict[s] = tot_model
+    model_dict = dict(ps=ps_model_dict, tot=tot_model_dict)
+
+    return df, imp_df, model_dict

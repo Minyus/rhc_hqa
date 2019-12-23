@@ -108,4 +108,4 @@ PIPELINES:
 
       - inputs: [df_020, parameters]
         func: rhc_hqa.rhc_hqa.estimate_cate
-        outputs: [df_030, feature_importances_df]
+        outputs: [df_030, feature_importances_df, model_dict]

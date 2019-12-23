@@ -19,3 +19,6 @@ data/load/df_020.csv:
 data/load/df_030.csv:
 
 data/load/feature_importances_df.csv:
+
+data/model/model_dict.pickle:
+  type: PickleLocalDataSet
